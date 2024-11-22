@@ -81,27 +81,39 @@ namespace Hikaria.DropItem.Handlers
             m_interactionDropItem.SetActive(IsContainerOpen && !IsSlotInUse);
         }
 
-        public void AddItem(LG_PickupItem_Sync item)
+        public void AddItem(LG_PickupItem_Sync item, bool isSetup = false)
         {
-            if (item == null)
-                return;
+            AddItem(item.gameObject.GetInstanceID());
 
-            if (m_itemInSlot == null)
+            // 避免出现游离物品，游离物品不会被销毁
+            if (!isSetup)
             {
-                m_itemInSlot = item;
-                s_SlotItemLookup[this] = m_itemInSlot.gameObject.GetInstanceID();
-                s_ItemSlotLookup[m_itemInSlot.gameObject.GetInstanceID()] = this;
+                var itemSlot = item.item.TryCast<ArtifactPickup_Core>() != null ? InventorySlot.InPocket : item.item.Get_pItemData().slot;
+                if (TryGetTransform(itemSlot, out var tf))
+                    item.transform.SetParent(tf);
+            }
+        }
+
+        private void AddItem(int instanceID)
+        {
+            if (!IsSlotInUse)
+            {
+                m_hasItemInSlot = true;
+                m_itemInSlot = instanceID;
+                s_SlotItemLookup[this] = m_itemInSlot;
+                s_ItemSlotLookup[m_itemInSlot] = this;
                 m_interactionDropItem.SetActive(false);
             }
         }
 
         public void RemoveItem(bool isDestroy = false)
         {
-            if (m_itemInSlot != null)
+            if (IsSlotInUse)
             {
+                m_hasItemInSlot = false;
                 s_SlotItemLookup.Remove(this);
-                s_ItemSlotLookup.Remove(m_itemInSlot.gameObject.GetInstanceID());
-                m_itemInSlot = null;
+                s_ItemSlotLookup.Remove(m_itemInSlot);
+                m_itemInSlot = 0;
             }
             if (!isDestroy)
                 m_interactionDropItem.SetActive(IsContainerOpen && !IsSlotInUse);
@@ -165,7 +177,7 @@ namespace Hikaria.DropItem.Handlers
 
         public bool IsContainerOpen => m_resourceContainer.ISOpen;
 
-        public bool IsSlotInUse => m_itemInSlot != null;
+        public bool IsSlotInUse => m_hasItemInSlot && m_itemInSlot != 0;
 
         public AIG_CourseNode SpawnNode => m_resourceContainer.SpawnNode;
 
@@ -177,7 +189,8 @@ namespace Hikaria.DropItem.Handlers
         private LG_WeakResourceContainer m_resourceContainer;
         private StorageSlot m_slot;
         private int m_slotIndex;
-        private LG_PickupItem_Sync m_itemInSlot;
+        private bool m_hasItemInSlot = false;
+        private int m_itemInSlot = 0;
 
         public float InteractDuration { get => m_interactionDropItem.InteractDuration; set => m_interactionDropItem.InteractDuration = value; }
 

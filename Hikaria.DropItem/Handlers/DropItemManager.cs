@@ -38,28 +38,23 @@ namespace Hikaria.DropItem.Handlers
         {
             if (source == null)
                 return;
-
             if (!PlayerBackpackManager.TryGetBackpack(source.Owner, out var backpack))
                 return;
-
             var wieldItem = source.Inventory.WieldedItem;
             if (wieldItem == null || !PlayerBackpackManager.TryGetItemInLevelFromItemData(wieldItem.Get_pItemData(), out var item))
                 return;
-
             var itemInLevel = item.TryCast<ItemInLevel>();
             if (itemInLevel == null)
                 return;
-
             var wieldSlot = source.Inventory.WieldedSlot;
             if (!slot.TryGetTransform(wieldSlot, out var tf))
                 return;
-
             var itemSync = itemInLevel.GetSyncComponent();
             if (itemSync == null)
                 return;
             pItemData_Custom customData = itemSync.GetCustomData();
             customData.ammo = backpack.AmmoStorage.GetInventorySlotAmmo(wieldSlot).AmmoInPack;
-            itemSync.AttemptPickupInteraction(ePickupItemInteractionType.Place, source.Owner, customData, tf.position, tf.rotation, slot.SpawnNode, false, true);
+            itemSync.AttemptPickupInteraction(ePickupItemInteractionType.Place, source.Owner, customData, tf.position, tf.rotation, slot.SpawnNode, false, false);
         }
 
         public static bool PlayerCanInteract(LG_WeakResourceContainer_Slot slot, PlayerAgent source)
@@ -84,7 +79,6 @@ namespace Hikaria.DropItem.Handlers
                 return;
             if (!slot.TryGetTransform(agent.Inventory.WieldedSlot, out var tf))
                 return;
-
             s_itemGhost = UnityEngine.Object.Instantiate(prefab, tf.position, tf.rotation);
             foreach (Renderer renderer in s_itemGhost.GetComponentsInChildren<Renderer>())
             {

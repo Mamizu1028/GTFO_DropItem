@@ -3,7 +3,6 @@ using Hikaria.Core.Interfaces;
 using Hikaria.DropItem.Handlers;
 using LevelGeneration;
 using Localization;
-using Player;
 using SNetwork;
 using TheArchive.Core.Attributes;
 using TheArchive.Core.Attributes.Feature.Settings;
@@ -84,10 +83,7 @@ namespace Hikaria.DropItem.Features
                 var state = itemSync.GetCurrentState();
                 if (state.status != ePickupItemStatus.PlacedInLevel)
                     continue;
-                if (!LG_WeakResourceContainer_Slot.TryFindSlot(itemSync, out var slot))
-                    continue;
-                var itemSlot = item.TryCast<ArtifactPickup_Core>() != null ? InventorySlot.InPocket : item.Get_pItemData().slot;
-                if (!slot.IsValidInventorySlot(itemSlot))
+                if (!LG_WeakResourceContainer_Slot.TryFindSlot(itemSync.transform.position, out var slot))
                     continue;
                 slot.AddItem(itemSync);
             }
@@ -153,10 +149,10 @@ namespace Hikaria.DropItem.Features
                 if (state.status != ePickupItemStatus.PlacedInLevel)
                     return;
 
-                if (!LG_WeakResourceContainer_Slot.TryFindSlot(__instance, out var slot))
+                if (!LG_WeakResourceContainer_Slot.TryFindSlot(__instance.transform.position, out var slot))
                     return;
 
-                slot.AddItem(__instance);
+                slot.AddItem(__instance, true);
             }
         }
 
@@ -169,10 +165,10 @@ namespace Hikaria.DropItem.Features
                 if (state.status != ePickupItemStatus.PlacedInLevel)
                     return;
 
-                if (!LG_WeakResourceContainer_Slot.TryFindSlot(__instance, out var slot))
+                if (!LG_WeakResourceContainer_Slot.TryFindSlot(__instance.transform.position, out var slot))
                     return;
 
-                slot.AddItem(__instance);
+                slot.AddItem(__instance, true);
             }
         }
 

@@ -28,6 +28,8 @@ namespace Hikaria.DropItem.Features
         public class DropItemSettings
         {
             [FSDisplayName("交互时间")]
+            [FSDescription("最小0.4, 最大1, 默认0.4")]
+            [FSSlider(0.4f, 1f, FSSlider.SliderStyle.FloatOneDecimal, FSSlider.RoundTo.OneDecimal)]
             public float InteractDuration { get; set; } = 0.4f;
         }
 
@@ -40,6 +42,9 @@ namespace Hikaria.DropItem.Features
 
         public override void OnFeatureSettingChanged(FeatureSetting setting)
         {
+            if (CurrentGameState < (int)eGameStateName.InLevel)
+                return;
+
             foreach (var slot in UnityEngine.Object.FindObjectsOfType<LG_WeakResourceContainer_Slot>())
             {
                 slot.InteractDuration = Settings.InteractDuration;
@@ -81,8 +86,8 @@ namespace Hikaria.DropItem.Features
                     continue;
                 if (!LG_WeakResourceContainer_Slot.TryFindSlot(itemSync, out var slot))
                     continue;
-                var inventorySlot = item.TryCast<ArtifactPickup_Core>() != null ? InventorySlot.InPocket : item.Get_pItemData().slot;
-                if (!slot.IsValidInventorySlot(itemSync.item.Get_pItemData().slot))
+                var itemSlot = item.TryCast<ArtifactPickup_Core>() != null ? InventorySlot.InPocket : item.Get_pItemData().slot;
+                if (!slot.IsValidInventorySlot(itemSlot))
                     continue;
                 slot.AddItem(itemSync);
             }
@@ -147,6 +152,23 @@ namespace Hikaria.DropItem.Features
                 var state = __instance.GetCurrentState();
                 if (state.status != ePickupItemStatus.PlacedInLevel)
                     return;
+
+                if (!LG_WeakResourceContainer_Slot.TryFindSlot(__instance, out var slot))
+                    return;
+
+                slot.AddItem(__instance);
+            }
+        }
+
+        [ArchivePatch(typeof(LG_PickupItem_Sync), nameof(LG_PickupItem_Sync.SetStateFromFactory))]
+        private class LG_PickupItem_Sync__SetStateFromFactory__Patch
+        {
+            private static void Postfix(LG_PickupItem_Sync __instance)
+            {
+                var state = __instance.GetCurrentState();
+                if (state.status != ePickupItemStatus.PlacedInLevel)
+                    return;
+
                 if (!LG_WeakResourceContainer_Slot.TryFindSlot(__instance, out var slot))
                     return;
 

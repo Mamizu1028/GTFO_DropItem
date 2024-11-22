@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hikaria.DropItem", "Hikaria.DropItem\Hikaria.DropItem.csproj", "{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Debug|Any CPU.Build.0 = Debug|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Debug|Mixed Platforms.ActiveCfg = Release|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Debug|Mixed Platforms.Build.0 = Release|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Debug|x64.ActiveCfg = Debug|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Debug|x64.Build.0 = Debug|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Release|Any CPU.ActiveCfg = Release|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Release|Any CPU.Build.0 = Release|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Release|Mixed Platforms.Build.0 = Release|x64
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Release|x64.ActiveCfg = Release|Any CPU
+		{43F1AA5E-CA2A-44F5-AC3E-DA0E9FFD754C}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -71,7 +71,11 @@ namespace Hikaria.DropItem.Handlers
             var wieldItem = agent?.Inventory?.WieldedItem;
             if (wieldItem == null)
                 return;
-            var list = ItemSpawnManager.GetItemPrefabs(wieldItem.Get_pItemData().itemID_gearCRC, ItemMode.Pickup);
+            var lookup = ItemSpawnManager.m_loadedPrefabsPerItemMode[(int)ItemMode.Pickup];
+            var crc = wieldItem.Get_pItemData().itemID_gearCRC;
+            if (!lookup.ContainsKey(crc))
+                return;
+            var list = lookup[crc];
             if (list == null || list.Count < 1)
                 return;
             var prefab = list[0];

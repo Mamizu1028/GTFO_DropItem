@@ -72,7 +72,7 @@ namespace Hikaria.DropItem.Handlers
             if (wieldItem == null)
                 return;
             var list = ItemSpawnManager.GetItemPrefabs(wieldItem.Get_pItemData().itemID_gearCRC, ItemMode.Pickup);
-            if (list.Count < 1)
+            if (list == null || list.Count < 1)
                 return;
             var prefab = list[0];
             if (prefab == null)
@@ -90,7 +90,7 @@ namespace Hikaria.DropItem.Handlers
             }
         }
 
-        private static void DespawnItemGhost()
+        public static void DespawnItemGhost()
         {
             if (s_itemGhost != null)
             {

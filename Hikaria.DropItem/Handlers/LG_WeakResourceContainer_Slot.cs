@@ -62,7 +62,7 @@ namespace Hikaria.DropItem.Handlers
         private void OnDestroy()
         {
             RemoveItem(true);
-
+            DropItemManager.DespawnItemGhost();
             if (s_ContainerSlotsLookup.TryGetValue(m_resourceContainer, out var lookup))
             {
                 lookup.Remove(m_slotIndex);

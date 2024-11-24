@@ -49,6 +49,7 @@ namespace Hikaria.DropItem.Handlers
             m_interactionDropItem.ExternalPlayerCanInteract = new Func<PlayerAgent, bool>((player) => { return DropItemManager.PlayerCanInteract(this, player); });
             m_interactionDropItem.OnInteractionSelected = new Action<PlayerAgent, bool>((player, state) => { DropItemManager.OnSelectedChange(this, player, state); });
             m_interactionDropItem.OnInteractionTriggered = new Action<PlayerAgent>((player) => { DropItemManager.TriggerInteractionAction(this, player); });
+            m_interactionDropItem.OnlyActiveWhenLookingStraightAt = true;
             m_interactionDropItem.SetActive(true);
             sync.OnSyncStateChange += new Action<eResourceContainerStatus, bool>((status, isRecall) =>
             {

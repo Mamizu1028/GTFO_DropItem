@@ -43,7 +43,7 @@ namespace Hikaria.DropItem.Handlers
             }
 
             m_interactionDropItem = GetComponent<Interact_Timed>() ?? gameObject.AddComponent<Interact_Timed>();
-            m_interactionDropItem.InteractDuration = Features.DropItem.Settings.InteractDuration;
+            m_interactionDropItem.InteractDuration = 0.4f;
             m_interactionDropItem.InteractionMessage = string.Empty;
             m_interactionDropItem.m_colliderToOwn = GetComponent<BoxCollider>() ?? gameObject.AddComponent<BoxCollider>();
             m_interactionDropItem.ExternalPlayerCanInteract = new Func<PlayerAgent, bool>((player) => { return DropItemManager.PlayerCanInteract(this, player); });

@@ -5,7 +5,6 @@ using LevelGeneration;
 using Localization;
 using SNetwork;
 using TheArchive.Core.Attributes;
-using TheArchive.Core.Attributes.Feature.Settings;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Loader;
@@ -19,18 +18,6 @@ namespace Hikaria.DropItem.Features
     {
         public override string Name => "放置物品";
 
-        public override bool InlineSettingsIntoParentMenu => true;
-
-        [FeatureConfig]
-        public static DropItemSettings Settings { get; set; }
-
-        public class DropItemSettings
-        {
-            [FSDisplayName("交互时间")]
-            [FSDescription("最小0.4, 最大1, 默认0.4")]
-            [FSSlider(0.4f, 1f, FSSlider.SliderStyle.FloatOneDecimal, FSSlider.RoundTo.OneDecimal)]
-            public float InteractDuration { get; set; } = 0.4f;
-        }
 
         public override void Init()
         {
@@ -43,11 +30,6 @@ namespace Hikaria.DropItem.Features
         {
             if (CurrentGameState < (int)eGameStateName.InLevel)
                 return;
-
-            foreach (var slot in UnityEngine.Object.FindObjectsOfType<LG_WeakResourceContainer_Slot>())
-            {
-                slot.InteractDuration = Settings.InteractDuration;
-            }
         }
 
         public override void OnGameStateChanged(int state)

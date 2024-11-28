@@ -9,8 +9,20 @@ namespace Hikaria.DropItem.Handlers
     {
         public void Setup(LG_WeakResourceContainer container, LG_ResourceContainer_Sync sync, StorageSlot slot, int slotIndex)
         {
-            m_resourceContainer = container;
-            if (!s_ContainerSlotsLookup.TryGetValue(m_resourceContainer, out var slotsLookup))
+            m_container = container;
+            if (!m_container)
+            {
+                Destroy(this);
+                return;
+            }
+            m_containerGraphics = container.m_graphics?.TryCast<LG_WeakResourceContainer_Graphics>();
+            if (!m_containerGraphics)
+            {
+                Destroy(this);
+                return;
+            }
+
+            if (!s_ContainerSlotsLookup.TryGetValue(m_container, out var slotsLookup))
             {
                 slotsLookup = new();
                 s_ContainerSlotsLookup[container] = slotsLookup;
@@ -27,7 +39,7 @@ namespace Hikaria.DropItem.Handlers
             if (slot.Keycard != null)
                 m_allowedSlots.Add(InventorySlot.InPocket);
 
-            if (m_resourceContainer.m_isLocker)
+            if (m_container.m_isLocker)
             {
                 var slotInfo = SlotInfo.LockerSlotInfo[slotIndex];
                 gameObject.transform.localRotation = Quaternion.identity;
@@ -64,11 +76,11 @@ namespace Hikaria.DropItem.Handlers
         {
             RemoveItem(true);
             DropItemManager.DespawnItemGhost();
-            if (s_ContainerSlotsLookup.TryGetValue(m_resourceContainer, out var lookup))
+            if (s_ContainerSlotsLookup.TryGetValue(m_container, out var lookup))
             {
                 lookup.Remove(m_slotIndex);
                 if (lookup.Count < 1)
-                    s_ContainerSlotsLookup.Remove(m_resourceContainer);
+                    s_ContainerSlotsLookup.Remove(m_container);
             }
         }
 
@@ -176,18 +188,19 @@ namespace Hikaria.DropItem.Handlers
 
         public bool IsValidInventorySlot(InventorySlot slot) => m_allowedSlots.Contains(slot);
 
-        public bool IsContainerOpen => m_resourceContainer.ISOpen || (m_resourceContainer?.m_graphics?.TryCast<LG_WeakResourceContainer_Graphics>()?.m_status == eResourceContainerStatus.Open);
+        public bool IsContainerOpen => m_container.ISOpen || m_containerGraphics.m_status == eResourceContainerStatus.Open;
 
         public bool IsSlotInUse => m_hasItemInSlot && m_itemInSlot != 0;
 
-        public AIG_CourseNode SpawnNode => m_resourceContainer.SpawnNode;
+        public AIG_CourseNode SpawnNode => m_container.SpawnNode;
 
         private static readonly Dictionary<LG_WeakResourceContainer_Slot, int> s_SlotItemLookup = new();
         private static readonly Dictionary<LG_WeakResourceContainer, Dictionary<int, LG_WeakResourceContainer_Slot>> s_ContainerSlotsLookup = new();
         private static readonly Dictionary<int, LG_WeakResourceContainer_Slot> s_ItemSlotLookup = new();
 
         private readonly HashSet<InventorySlot> m_allowedSlots = new();
-        private LG_WeakResourceContainer m_resourceContainer;
+        private LG_WeakResourceContainer m_container;
+        private LG_WeakResourceContainer_Graphics m_containerGraphics;
         private StorageSlot m_slot;
         private int m_slotIndex;
         private bool m_hasItemInSlot = false;

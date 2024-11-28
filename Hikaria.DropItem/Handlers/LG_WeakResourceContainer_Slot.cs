@@ -176,7 +176,7 @@ namespace Hikaria.DropItem.Handlers
 
         public bool IsValidInventorySlot(InventorySlot slot) => m_allowedSlots.Contains(slot);
 
-        public bool IsContainerOpen => m_resourceContainer.ISOpen;
+        public bool IsContainerOpen => m_resourceContainer.ISOpen || (m_resourceContainer?.m_graphics?.TryCast<LG_WeakResourceContainer_Graphics>()?.m_status == eResourceContainerStatus.Open);
 
         public bool IsSlotInUse => m_hasItemInSlot && m_itemInSlot != 0;
 

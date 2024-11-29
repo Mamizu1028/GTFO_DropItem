@@ -180,7 +180,7 @@ namespace Hikaria.DropItem.Features
             private static void Postfix(LG_PickupItem_Sync __instance)
             {
                 ItemCuller component = __instance.GetComponent<ItemCuller>();
-                if (component != null)
+                if (component && component.CullBucket != null)
                 {
                     component.CullBucket.NeedsShadowRefresh = true;
                     component.CullBucket.SetDirtyCMDBuffer();

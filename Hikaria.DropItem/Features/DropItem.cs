@@ -14,6 +14,7 @@ namespace Hikaria.DropItem.Features
 {
     [EnableFeatureByDefault]
     [DisallowInGameToggle]
+    [HideInModSettings]
     public class DropItem : Feature, IOnRecallComplete
     {
         public override string Name => "放置物品";

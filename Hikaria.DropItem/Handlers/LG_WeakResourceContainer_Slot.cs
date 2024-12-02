@@ -97,6 +97,13 @@ namespace Hikaria.DropItem.Handlers
         public void AddItem(LG_PickupItem_Sync item, bool isSetup = false)
         {
             AddItem(item.gameObject.GetInstanceID());
+            var itemInLevel = item.item?.TryCast<ItemInLevel>();
+            if (itemInLevel)
+            {
+                var storage = m_container.m_storage?.Cast<LG_ResourceContainer_Storage>();
+                if (storage)
+                    itemInLevel.container = storage;
+            }
 
             // 避免出现游离物品，游离物品不会被销毁
             if (!isSetup)

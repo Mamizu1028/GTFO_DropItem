@@ -22,6 +22,8 @@ namespace Hikaria.DropItem.Handlers
                 return;
             }
 
+            m_containerStorage = container.m_storage?.TryCast<LG_ResourceContainer_Storage>();
+
             if (!s_ContainerSlotsLookup.TryGetValue(m_container, out var slotsLookup))
             {
                 slotsLookup = new();
@@ -45,6 +47,7 @@ namespace Hikaria.DropItem.Handlers
                 gameObject.transform.localRotation = Quaternion.identity;
                 gameObject.transform.localPosition = slotInfo.LocalPosition;
                 gameObject.transform.localScale = slotInfo.LocalScale;
+                gameObject.AddComponent<PlayerPingTarget>().m_pingTargetStyle = eNavMarkerStyle.PlayerPingResourceLocker;
             }
             else
             {
@@ -52,6 +55,7 @@ namespace Hikaria.DropItem.Handlers
                 gameObject.transform.localRotation = Quaternion.identity;
                 gameObject.transform.localPosition = slotInfo.LocalPosition;
                 gameObject.transform.localScale = slotInfo.LocalScale;
+                gameObject.AddComponent<PlayerPingTarget>().m_pingTargetStyle = eNavMarkerStyle.PlayerPingResourceBox;
             }
 
             m_interactionDropItem = GetComponent<Interact_Timed>() ?? gameObject.AddComponent<Interact_Timed>();
@@ -200,6 +204,8 @@ namespace Hikaria.DropItem.Handlers
         public bool IsSlotInUse => m_hasItemInSlot && m_itemInSlot != 0;
 
         public AIG_CourseNode SpawnNode => m_container.SpawnNode;
+        public LG_WeakResourceContainer Container => m_container;
+        public LG_ResourceContainer_Storage Storage => m_containerStorage;
 
         private static readonly Dictionary<LG_WeakResourceContainer_Slot, int> s_SlotItemLookup = new();
         private static readonly Dictionary<LG_WeakResourceContainer, Dictionary<int, LG_WeakResourceContainer_Slot>> s_ContainerSlotsLookup = new();
@@ -207,6 +213,7 @@ namespace Hikaria.DropItem.Handlers
 
         private readonly HashSet<InventorySlot> m_allowedSlots = new();
         private LG_WeakResourceContainer m_container;
+        private LG_ResourceContainer_Storage m_containerStorage;
         private LG_WeakResourceContainer_Graphics m_containerGraphics;
         private StorageSlot m_slot;
         private int m_slotIndex;

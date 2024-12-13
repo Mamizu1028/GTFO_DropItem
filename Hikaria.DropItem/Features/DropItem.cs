@@ -1,4 +1,5 @@
-﻿using Hikaria.Core;
+﻿using AIGraph;
+using Hikaria.Core;
 using Hikaria.Core.Interfaces;
 using Hikaria.DropItem.Handlers;
 using LevelGeneration;
@@ -168,22 +169,89 @@ namespace Hikaria.DropItem.Features
                 if (newState.status == ePickupItemStatus.PlacedInLevel)
                 {
                     if (LG_WeakResourceContainer_Slot.TryFindSlot(newState.placement.position, out var slot))
+                    {
                         slot.AddItem(__instance);
+                        var item = __instance.item.TryCast<ItemInLevel>();
+                        if (item != null)
+                            item.container = slot.Storage;
+                    }
                 }
                 else if (newState.status == ePickupItemStatus.PickedUp)
                 {
                     if (LG_WeakResourceContainer_Slot.TryFindSlot(__instance, out var slot))
+                    {
                         slot.RemoveItem();
+                        var item = __instance.item.TryCast<ItemInLevel>();
+                        if (item != null)
+                            item.container = null;
+                    }
                 }
             }
 
-            private static void Postfix(LG_PickupItem_Sync __instance)
+            private static void Postfix(LG_PickupItem_Sync __instance, pPickupItemState newState)
             {
                 ItemCuller component = __instance.GetComponent<ItemCuller>();
-                if (component && component.CullBucket != null)
+                if (component?.CullBucket != null)
                 {
                     component.CullBucket.NeedsShadowRefresh = true;
                     component.CullBucket.SetDirtyCMDBuffer();
+                }
+
+                // 修正SpawnNode为物品所在CourseNode，因为TerminalPing基于SpawnNode
+                if (newState.status == ePickupItemStatus.PlacedInLevel)
+                {
+                    var terminalItem = __instance.item.GetComponentInChildren<iTerminalItem>();
+                    if (terminalItem != null && newState.placement.node.TryGet(out var node))
+                        terminalItem.SpawnNode = node;
+                }
+            }
+        }
+
+        [ArchivePatch(typeof(ItemSpawnManager), nameof(ItemSpawnManager.SpawnItem))]
+        private class ItemSpawnManager__SpawnItem__Patch
+        {
+            private static void Postfix(global::Item __result)
+            {
+                var itemInLevel = __result.TryCast<ItemInLevel>();
+                if (itemInLevel == null)
+                    return;
+                if (itemInLevel.CourseNode != null)
+                    return;
+
+                if (itemInLevel.internalSync.GetCurrentState().status != ePickupItemStatus.PlacedInLevel)
+                    return;
+
+                if (itemInLevel.Get_pItemData().originCourseNode.TryGet(out var node))
+                {
+                    itemInLevel.CourseNode = node;
+                    return;
+                }
+                var terminalItem = itemInLevel.GetComponent<iTerminalItem>();
+                if (terminalItem != null)
+                {
+                    itemInLevel.CourseNode = terminalItem.SpawnNode;
+                    return;
+                }
+                var pickupItem = itemInLevel.transform.parent?.parent?.GetComponentInChildren<LG_PickupItem>();
+                if (pickupItem != null)
+                {
+                    itemInLevel.CourseNode = pickupItem.SpawnNode;
+                    return;
+                }
+            }
+        }
+
+        [ArchivePatch(typeof(LG_ResourceContainer_Storage), nameof(LG_ResourceContainer_Storage.SetSpawnNode))]
+        private class LG_ResourceContainer_Storage__SetSpawnNode__Patch
+        {
+            private static void Postfix(LG_ResourceContainer_Storage __instance, GameObject obj, AIG_CourseNode spawnNode)
+            {
+                foreach (var item in obj.GetComponentsInChildren<ItemInLevel>())
+                {
+                    if (item.CourseNode == null && item.internalSync.GetCurrentState().status == ePickupItemStatus.PlacedInLevel)
+                    {
+                        item.CourseNode = spawnNode;
+                    }
                 }
             }
         }

@@ -11,9 +11,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<LocalizationFileDir>./Localization/</LocalizationFileDir>
+		<LocalizationFileDir>../Localization/</LocalizationFileDir>
 		<CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
-		<PluginOutputPath>../output/Hikaria.DropItem/plugins/</PluginOutputPath>
+		<PluginOutputPath>../output/$(AssemblyName)/plugins/</PluginOutputPath>
 	</PropertyGroup>
 
 	<Import Project="../Dependencies.props" />

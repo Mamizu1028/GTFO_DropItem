@@ -13,6 +13,7 @@ namespace Hikaria.DropItem
     {
         public void Init()
         {
+            Logs.Setup(Logger);
         }
 
         public string ModuleGroup => FeatureGroups.GetOrCreateModuleGroup(PluginInfo.GUID);

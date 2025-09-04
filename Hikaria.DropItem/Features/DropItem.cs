@@ -5,7 +5,8 @@ using Hikaria.DropItem.Handlers;
 using LevelGeneration;
 using Localization;
 using SNetwork;
-using TheArchive.Core.Attributes;
+using TheArchive.Core.Attributes.Feature;
+using TheArchive.Core.Attributes.Feature.Patches;
 using TheArchive.Core.FeaturesAPI;
 using TheArchive.Core.FeaturesAPI.Settings;
 using TheArchive.Loader;
@@ -20,10 +21,9 @@ namespace Hikaria.DropItem.Features
     {
         public override string Name => "放置物品";
 
-
         public override void Init()
         {
-            GameEventAPI.RegisterSelf(this);
+            GameEventAPI.RegisterListener(this);
 
             LoaderWrapper.ClassInjector.RegisterTypeInIl2Cpp<LG_WeakResourceContainer_Slot>();
         }
@@ -212,7 +212,7 @@ namespace Hikaria.DropItem.Features
         {
             private static void Postfix(global::Item __result)
             {
-                var itemInLevel = __result.TryCast<ItemInLevel>();
+                var itemInLevel = __result?.TryCast<ItemInLevel>();
                 if (itemInLevel == null)
                     return;
                 if (itemInLevel.CourseNode != null)
